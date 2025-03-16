@@ -111,18 +111,7 @@ body{
 .controls i:active{
   transform: scale(0.9);
 }
-.container button{
-  width: 100%;
-  padding: 14px;
-  outline: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  margin-top: 20px;
-  font-size: 17px;
-  border-radius: 5px;
-  background: #00bc69;
-}
+
 
 @media (max-width: 660px) {
   .container {
@@ -179,11 +168,5 @@ body{
     font-size: 16px;
     padding: 5px;
     margin: 5px 0;
-  }
-
-  .container button {
-    padding: 14px;
-    font-size: 16px;
-    width: 100%;
   }
 }
