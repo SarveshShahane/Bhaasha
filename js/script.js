@@ -47,29 +47,39 @@ fromText.addEventListener("keyup", () => {
   }
 });
 
-translateBtn.addEventListener("click", () => {
-  translateText(); 
-});
+function detectLanguage(text) {
+  let detectUrl = `https://api.mymemory.translated.net/get?q=${text}&langpair=auto|en`;
+  return fetch(detectUrl)
+    .then((res) => res.json())
+    .then((data) => data.responseData.detectedSourceLanguage);
+}
 
 function translateText() {
   let text = fromText.value.trim(),
-    translateFrom = selectTag[0].value,
-    translateTo = selectTag[1].value;
+    translateFrom = selectTag[0].value, // Get selected source language
+    translateTo = selectTag[1].value; // Get target language
+
   if (!text) return;
   toText.setAttribute("placeholder", "Translating...");
 
+  // If user selects "Auto-Detect", detect language first
+  if (translateFrom === "auto") {
+    detectLanguage(text).then((detectedLang) => {
+      selectTag[0].value = detectedLang; // Update dropdown with detected language
+      fetchTranslation(text, detectedLang, translateTo);
+    });
+  } else {
+    fetchTranslation(text, translateFrom, translateTo);
+  }
+}
+
+function fetchTranslation(text, translateFrom, translateTo) {
   let apiUrl = `https://api.mymemory.translated.net/get?q=${text}&langpair=${translateFrom}|${translateTo}`;
 
   fetch(apiUrl)
     .then((res) => res.json())
     .then((data) => {
       toText.value = data.responseData.translatedText;
-      data.matches.forEach((match) => {
-        if (match.id === 0) {
-          toText.value = match.translation;
-        }
-      });
-      toText.setAttribute("placeholder", "Translation");
     })
     .catch(() => {
       toText.value = "Translation Error!";
